@@ -2,32 +2,32 @@
 
 public class Moves {
 	
-	private int[][] empty;
-	private int[][] attack;
-	private int[] curLocat;
+	private byte[][] empty;
+	private byte[][] attack;
+	private byte[] curLocat;
 	
 	public Moves() {
-		empty = new int[8][8];
-		attack = new int[8][8];
-		curLocat = new int[]{-1, -1};
+		empty = new byte[8][8];
+		attack = new byte[8][8];
+		curLocat = new byte[]{-1, -1};
 	}
 	
 	public void reset() {
-		empty = new int[8][8];
-		attack = new int[8][8];
+		empty = new byte[8][8];
+		attack = new byte[8][8];
 		curLocat[0] = -1;
 		curLocat[1] = -1;
 	}
 	
-	public int getCurLocatX() {
+	public byte getCurLocatX() {
 		return curLocat[0];
 	}
 	
-	public int getCurLocatY() {
+	public byte getCurLocatY() {
 		return curLocat[1];
 	}
 
-	public void selectPiece(int x, int y, int piece, int[][] friendly, int[][] opposing) {
+	public void selectPiece(byte x, byte y, byte piece, byte[][] friendly, byte[][] opposing) {
 		curLocat[0] = x;
 		curLocat[1] = y;
 		switch (piece) {
@@ -57,11 +57,11 @@ public class Moves {
 		return curLocat[0] != -1;
 	}
 	
-	public boolean possibleEmpty(int x, int y) {
+	public boolean possibleEmpty(byte x, byte y) {
 		return empty[x][y] == 1;
 	}
 	
-	public boolean possibleAttack(int x, int y) {
+	public boolean possibleAttack(byte x, byte y) {
 		return attack[x][y] == 1;
 	}
 	
@@ -69,11 +69,11 @@ public class Moves {
 		return curLocat[0] < 0 || curLocat[0] > 7 || curLocat[1] < 0 || curLocat[1] > 7;
 	}
 	
-	private boolean isEmpty(int[][] friendly, int[][] opposing) {
+	private boolean isEmpty(byte[][] friendly, byte[][] opposing) {
 		return friendly[curLocat[0]][curLocat[1]] == 0 && opposing[curLocat[0]][curLocat[1]] == 0;
 	}
 	
-	private boolean cannotMoveFurther(int[][] friendly, int[][] opposing) {
+	private boolean cannotMoveFurther(byte[][] friendly, byte[][] opposing) {
 		if (friendly[curLocat[0]][curLocat[1]] != 0) {
 			return true;
 		} else if (opposing[curLocat[0]][curLocat[1]] != 0) {
@@ -85,8 +85,8 @@ public class Moves {
 		return false;
 	}
 	
-	private void movesRook(int[][] friendly, int[][] opposing) {
-		int[] save = new int[2];
+	private void movesRook(byte[][] friendly, byte[][] opposing) {
+		byte[] save = new byte[2];
 		System.arraycopy(curLocat, 0, save, 0, curLocat.length);
 		
 		// down direction
@@ -129,8 +129,8 @@ public class Moves {
 		System.arraycopy(save, 0, curLocat, 0, curLocat.length);
 	}
 	
-	private void movesBishop(int[][] friendly, int[][] opposing) {
-		int[] save = new int[2];
+	private void movesBishop(byte[][] friendly, byte[][] opposing) {
+		byte[] save = new byte[2];
 		System.arraycopy(curLocat, 0, save, 0, curLocat.length);
 		
 		// down-right direction
@@ -172,8 +172,8 @@ public class Moves {
 		System.arraycopy(save, 0, curLocat, 0, curLocat.length);
 	}
 	
-	private void movesPawn(int[][] friendly, int[][] opposing) {
-		int[] save = new int[2];
+	private void movesPawn(byte[][] friendly, byte[][] opposing) {
+		byte[] save = new byte[2];
 		System.arraycopy(curLocat, 0, save, 0, curLocat.length);
 		
 		if (friendly[save[0]][save[1]] == 6) {
@@ -235,12 +235,12 @@ public class Moves {
 
 	}
 
-	private void movesKnight(int[][] friendly, int[][] opposing) {
-		int[] save = new int[2];
+	private void movesKnight(byte[][] friendly, byte[][] opposing) {
+		byte[] save = new byte[2];
 		System.arraycopy(curLocat, 0, save, 0, curLocat.length);
-		int[][] directions = {{1, 2}, {2, 1}, {-1, 2}, {-2, 1}, {1, -2}, {2, -1}, {-1, -2}, {-2, -1}};
+		byte[][] directions = {{1, 2}, {2, 1}, {-1, 2}, {-2, 1}, {1, -2}, {2, -1}, {-1, -2}, {-2, -1}};
 		
-		for (int i = 0; i < directions.length; i++) {
+		for (byte i = 0; i < directions.length; i++) {
 			// add in direction
 			curLocat[0] += directions[i][0];
 			curLocat[1] += directions[i][1];
@@ -257,17 +257,17 @@ public class Moves {
 		}
 	}
 	
-	private void movesQueen(int[][] friendly, int[][] opposing) {
+	private void movesQueen(byte[][] friendly, byte[][] opposing) {
 		movesRook(friendly, opposing);
 		movesBishop(friendly, opposing);
 	}
 
-	private void movesKing(int[][] friendly, int[][] opposing) {
-		int[] save = new int[2];
+	private void movesKing(byte[][] friendly, byte[][] opposing) {
+		byte[] save = new byte[2];
 		System.arraycopy(curLocat, 0, save, 0, curLocat.length);
-		int[][] directions = {{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
+		byte[][] directions = {{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
 		
-		for (int i = 0; i < directions.length; i++) {
+		for (byte i = 0; i < directions.length; i++) {
 			// add in direction
 			curLocat[0] += directions[i][0];
 			curLocat[1] += directions[i][1];

@@ -53,7 +53,7 @@ public class Window extends Frame implements MouseListener {
     	String[] whiteNames = new String[]{null, "wr", "wn", "wb", "wq", "wk", "wp", null};
     	String[] blackNames = new String[]{null, "br", "bn", "bb", "bq", "bk", null, "bp"}; 
     	
-    	for (int i = 0; i < 8; i++) {
+    	for (byte i = 0; i < 8; i++) {
     		if (blackNames[i] != null) {
     			try {
         			blackImgs[i] = ImageIO.read( getClass().getResource("images\\" + blackNames[i] + ".jpg") );
@@ -79,14 +79,14 @@ public class Window extends Frame implements MouseListener {
         Rectangle rect = new Rectangle(s/2-30, th/3, 60, th*2/3);
         drawCenteredString(g, "Chess 960", rect, font);   
         
-        for (int i = 0; i < 8; i++) {
-        	for (int j = 0; j < 8; j++) {
-        		if (moves.getCurLocatX() == i && moves.getCurLocatY() == j) {
-        			g.setColor(Color.BLUE);
-        		} else if (moves.possibleEmpty(i, j)) {
+        for (byte i = 0; i < 8; i++) {
+        	for (byte j = 0; j < 8; j++) {
+        		if (moves.possibleEmpty(i, j)) {
         			g.setColor(Color.PINK);
         		} else if (moves.possibleAttack(i, j)) {
         			g.setColor(Color.RED);
+        		} else if (moves.getCurLocatX() == i && moves.getCurLocatY() == j) {
+        			g.setColor(Color.BLUE);
         		} else if ( (i+j)%2 == 0 ) {
         			g.setColor(Color.YELLOW);
         		} else {
@@ -97,7 +97,7 @@ public class Window extends Frame implements MouseListener {
             	if (board.whiteLocations[i][j] != 0) {
             		try {
 						tracker.waitForID(0);
-						int piece = board.whiteLocations[i][j];
+						byte piece = board.whiteLocations[i][j];
 						g.drawImage(whiteImgs[piece],
 									j * s/8 + 10, th + i * s/8 + 10,
 									(j+1) * s/8 - 10, th + (i+1) * s/8 - 10,
@@ -109,7 +109,7 @@ public class Window extends Frame implements MouseListener {
             	} else if (board.blackLocations[i][j] != 0) {
             		try {
 						tracker.waitForID(0);
-						int piece = board.blackLocations[i][j];
+						byte piece = board.blackLocations[i][j];
 						g.drawImage(blackImgs[piece],
 									j * s/8 + 10, th + i * s/8 + 10,
 									(j+1) * s/8 - 10, th + (i+1) * s/8 - 10,
@@ -127,8 +127,8 @@ public class Window extends Frame implements MouseListener {
     	int x = e.getLocationOnScreen().x;
     	int y = e.getLocationOnScreen().y - th;
     	if (y >= 0) {
-    		int row = y * 8 / s;
-        	int col = x * 8 / s;
+    		byte row = new Integer(x * 8 / s).byteValue();
+        	byte col = new Integer(y * 8 / s).byteValue();
         	processClick(row, col);
     	}
     }
@@ -138,7 +138,7 @@ public class Window extends Frame implements MouseListener {
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
     
-    private void processClick(int x, int y) {
+    private void processClick(byte x, byte y) {
     	if (moves.pieceSelected()) {
     		if (x == moves.getCurLocatX() && y == moves.getCurLocatY()) {
     			moves.reset();
