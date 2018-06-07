@@ -50,10 +50,11 @@ public class Window extends Frame implements MouseListener {
     private void loadImages() {
     	whiteImgs = new BufferedImage[8];
     	blackImgs = new BufferedImage[8];
-    	String[] whiteNames = new String[]{null, "br", "bn", "bb", "bq", "bk", null, "bp"}; 
-    	String[] blackNames = new String[]{null, "wr", "wn", "wb", "wq", "wk", "wp", null};
+    	String[] whiteNames = new String[]{null, "wr", "wn", "wb", "wq", "wk", "wp", null};
+    	String[] blackNames = new String[]{null, "br", "bn", "bb", "bq", "bk", null, "bp"}; 
+    	
     	for (int i = 0; i < 8; i++) {
-    		if (blackImgs[i] != null) {
+    		if (blackNames[i] != null) {
     			try {
         			blackImgs[i] = ImageIO.read( getClass().getResource("images\\" + blackNames[i] + ".jpg") );
         			tracker.addImage(blackImgs[i], 0);
@@ -61,7 +62,7 @@ public class Window extends Frame implements MouseListener {
     			}
     		}
     		
-    		if (whiteImgs[i] != null) {
+    		if (whiteNames[i] != null) {
     			try {
         			whiteImgs[i] = ImageIO.read( getClass().getResource("images\\" + whiteNames[i] + ".jpg") );
         			tracker.addImage(whiteImgs[i], 0);
@@ -80,7 +81,13 @@ public class Window extends Frame implements MouseListener {
         
         for (int i = 0; i < 8; i++) {
         	for (int j = 0; j < 8; j++) {
-        		if ( (i+j)%2 == 0 ) {
+        		if (moves.getCurLocatX() == i && moves.getCurLocatY() == j) {
+        			g.setColor(Color.BLUE);
+        		} else if (moves.possibleEmpty(i, j)) {
+        			g.setColor(Color.PINK);
+        		} else if (moves.possibleAttack(i, j)) {
+        			g.setColor(Color.RED);
+        		} else if ( (i+j)%2 == 0 ) {
         			g.setColor(Color.YELLOW);
         		} else {
         			g.setColor(Color.GREEN);
@@ -90,22 +97,27 @@ public class Window extends Frame implements MouseListener {
             	if (board.whiteLocations[i][j] != 0) {
             		try {
 						tracker.waitForID(0);
-						g.drawImage(whiteImgs[board.whiteLocations[i][j]],
-									j * s/8, th + i * s/8, (j+1) * s/8, th + (i+1) * s/8,
-        							0, 0,
-        							whiteImgs[board.whiteLocations[i][j]].getWidth(),
-        							whiteImgs[board.whiteLocations[i][j]].getHeight(), 
+						int piece = board.whiteLocations[i][j];
+						g.drawImage(whiteImgs[piece],
+									j * s/8 + 10, th + i * s/8 + 10,
+									(j+1) * s/8 - 10, th + (i+1) * s/8 - 10,
+        							0, 0, whiteImgs[piece].getWidth(), whiteImgs[piece].getHeight(), 
         							null);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-            		//g.setColor(Color.WHITE);
-            		//rect = new Rectangle(j * s/8, th + i * s/8, s/8, s/8);
-                    //drawCenteredString(g, Integer.toString(board.whiteLocations[i][j]), rect, font);  
             	} else if (board.blackLocations[i][j] != 0) {
-            		g.setColor(Color.BLACK);
-            		rect = new Rectangle(j * s/8, th + i * s/8, s/8, s/8);
-                    drawCenteredString(g, Integer.toString(board.blackLocations[i][j]), rect, font);
+            		try {
+						tracker.waitForID(0);
+						int piece = board.blackLocations[i][j];
+						g.drawImage(blackImgs[piece],
+									j * s/8 + 10, th + i * s/8 + 10,
+									(j+1) * s/8 - 10, th + (i+1) * s/8 - 10,
+        							0, 0, blackImgs[piece].getWidth(), blackImgs[piece].getHeight(), 
+        							null);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
             	}
         	}
         }
@@ -130,17 +142,12 @@ public class Window extends Frame implements MouseListener {
     	if (moves.pieceSelected()) {
     		if (x == moves.getCurLocatX() && y == moves.getCurLocatY()) {
     			moves.reset();
-    		} else if (moves.isPossible(x, y)) {
+    		} else if (moves.possibleEmpty(x, y) || moves.possibleAttack(x, y)) {
     			board.changeBoard(x, y, moves.getCurLocatX(), moves.getCurLocatY());
     			moves.reset();
     		}
-    	} else {
-    		if (board.friendly[x][y] != 0) {
-    			System.out.println("New selected piece");
-    			moves.selectPiece(x, y, board.friendly[x][y], board.friendly, board.opposing);
-    		} else {
-    			System.out.println("No piece selected");
-    		}
+    	} else if (board.friendly[x][y] != 0) {
+    		moves.selectPiece(x, y, board.friendly[x][y], board.friendly, board.opposing);
     	}
     	
     	window.repaint();
