@@ -127,8 +127,8 @@ public class Window extends Frame implements MouseListener {
     	int x = e.getLocationOnScreen().x;
     	int y = e.getLocationOnScreen().y - th;
     	if (y >= 0) {
-    		byte row = new Integer(x * 8 / s).byteValue();
-        	byte col = new Integer(y * 8 / s).byteValue();
+    		byte row = new Integer(y * 8 / s).byteValue();
+        	byte col = new Integer(x * 8 / s).byteValue();
         	processClick(row, col);
     	}
     }
