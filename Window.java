@@ -77,7 +77,7 @@ public class Window extends Frame implements MouseListener {
         Font font = new Font("Arial", Font.PLAIN, 24);
         g.setFont(font);
         Rectangle rect = new Rectangle(s/2-30, th/3, 60, th*2/3);
-        drawCenteredString(g, "Chess 960", rect, font);   
+        drawCenteredString(g, "Simple Chess 960", rect, font);   
         
         for (byte i = 0; i < 8; i++) {
         	for (byte j = 0; j < 8; j++) {
@@ -143,11 +143,35 @@ public class Window extends Frame implements MouseListener {
     		if (x == moves.getCurLocatX() && y == moves.getCurLocatY()) {
     			moves.reset();
     		} else if (moves.possibleEmpty(x, y) || moves.possibleAttack(x, y)) {
-    			board.changeBoard(x, y, moves.getCurLocatX(), moves.getCurLocatY());
+    			board.changeBoard(moves.getCurLocatX(), moves.getCurLocatY(), x, y);
+    			board.switchTurns();
     			moves.reset();
     		}
     	} else if (board.friendly[x][y] != 0) {
     		moves.selectPiece(x, y, board.friendly[x][y], board.friendly, board.opposing);
+    		for (byte row = 0; row < 8; row++) {
+    			for (byte col = 0; col < 8; col++) {
+    				if (moves.getEmpty()[row][col] == 1) {
+    					board.changeBoard(moves.getCurLocatX(), moves.getCurLocatY(), row, col);
+    					moves.updateOpposingAttack(board.opposing, board.friendly);
+    						// switched to check for opponent attacks
+    					if (moves.inCheck(board.friendly)) {
+    						moves.removeMove(row, col);
+    					}
+    					board.changeBoard(row, col, moves.getCurLocatX(), moves.getCurLocatY());
+    				} else if (moves.getAttack()[row][col] == 1) {
+    					byte taken = board.opposing[row][col];
+    					board.changeBoard(moves.getCurLocatX(), moves.getCurLocatY(), row, col);
+    					moves.updateOpposingAttack(board.opposing, board.friendly);
+    						// switched to check for opponent attacks
+    					if (moves.inCheck(board.friendly)) {
+    						moves.removeMove(row, col);
+    					}
+    					board.changeBoard(row, col, moves.getCurLocatX(), moves.getCurLocatY());
+    					board.opposing[row][col] = taken;
+    				}
+    			}
+    		}
     	}
     	
     	window.repaint();

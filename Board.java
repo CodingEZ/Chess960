@@ -43,7 +43,7 @@ public class Board {
 		}
 	}
 	
-	public void changeBoard(byte newX, byte newY, byte oldX, byte oldY) {
+	public void changeBoard(byte oldX, byte oldY, byte newX, byte newY) {
 		// move the piece
 		if (whiteLocations[oldX][oldY] != 0) {
 			whiteLocations[newX][newY] = whiteLocations[oldX][oldY];
@@ -54,7 +54,9 @@ public class Board {
 			blackLocations[oldX][oldY] = 0;
 			whiteLocations[newX][newY] = 0;
 		}
-		
+	}
+	
+	public void switchTurns() {
 		// switch turns
 		if (friendly == whiteLocations) {
 			friendly = blackLocations;
